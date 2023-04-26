@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: tar -cf grc-${{github.ref_name}}.tar.gz .
+        run: tar -cvf grc-${{github.ref_name}}.tar.gz *
       - name: Test
         run: tar --list grc-${{github.ref_name}}.tar.gz
       - name: Release
