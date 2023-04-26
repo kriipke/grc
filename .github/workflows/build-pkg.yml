@@ -58,13 +58,13 @@ jobs:
       - name: Echo CWD
         run: pwd
 
-      - name: find .
-        run: find .
+      - name: find
+        run: find
 
       - name: Convert RPM to DEB
         run: |
           sudo apt install -y alien
-          sudo alien --to-deb grc-${{github.ref_name}}-*.rpm
+          sudo alien --to-deb grc-${{github.ref_name}}*.rpm
 
       - name: Upload artifact DEB
         uses: actions/upload-artifact@v1.0.0
