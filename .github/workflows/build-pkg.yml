@@ -1,0 +1,44 @@
+jobs:
+  build_tarball:
+    name: Builds .tar file
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Create archive
+        run: tar -cvf grc-${{github.ref_name}}.tar.gz *
+
+      - name: Upload .tar.gz archive as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: grc-${{github.ref_name}}.tar.gz
+          path: grc-${{github.ref_name}}.tar.gz          
+  temp_job:
+    name: build RPM
+    needs: build_tarball
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Download calculator-1.0.tar.gz
+        uses: actions/download-artifact@v2
+        with:
+          name: grc-${{github.ref_name}}.tar.gz          
+  
+      - name: replace version in grc.spec
+        run: sed -Ei 's/(^Version:\s*)[0-9]+\.[0-9]+/\1${{github.ref_name}}/'
+
+      - name: RPM Build
+        id: rpm
+        uses: naveenrajm7/rpmbuild@master
+        with:
+          spec_file: grc.spec
+        
+      - name: check for new builds
+        run: ls
+
+      - name: Upload .tar.gz archive as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: grc-${{github.ref_name}}-1.el7.x86_64.rpm
+          path: rpmbuild/RPMS/x86_64/grc*x86_64.rpm
