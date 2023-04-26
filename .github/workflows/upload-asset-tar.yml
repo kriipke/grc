@@ -6,22 +6,64 @@ on:
       - "v*.*.*"
 
 jobs:
-  build:
+  build-archive:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build
+        
+      - name: Tar
         run: tar -cvf grc-${{github.ref_name}}.tar.gz *
 
-      - name: Upload Artifact
+      - name: Upload .tar.gz Archive as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: grc-${{github.ref_name}}.tar.gz
           path: grc-${{github.ref_name}}.tar.gz
+  build-rpm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
 
+    - name: build RPM package
+      id: rpm
+      uses: naveenrajm7/rpmbuild@centos8
+      with:
+        spec_file: "grc.spec"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: grc-${github.ref_name}.el8.x86_64.rpm
+        path: ${{ steps.rpm.outputs.rpm_dir_path }}/**/grc-*.rpm
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: grc-${github.ref_name}.el8.x86_64.rpm
+      - name: Connect to PostgreSQL
+        run: |
+          apt install -y alien
+          alien --to-deb grc-*.rpm
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: Binary RPM
+          path: ./**/*.deb
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+      - name: Release       
+        uses: softprops/action-gh-release@v1        
+        with:          
+          files: |
+            grc-${{github.ref_name}}.tar.gz   
+            grc-${{github.ref_name}}.el8.x86_64.rpm
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: grc-${{github.ref_name}}.tar.gz
-
