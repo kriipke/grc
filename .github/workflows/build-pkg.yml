@@ -64,8 +64,11 @@ jobs:
       - name: find .
         run: find .
 
+      - name: find .
+        run: pwd
+
       - name: Upload artifact DEB
         uses: actions/upload-artifact@v1.0.0
         with:
           name: deb
-          path: "*/*.deb"
+          path: ./*.deb
