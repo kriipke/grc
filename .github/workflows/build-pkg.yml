@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rpm
-          path: rpmbuild/RPMS/*/grc*.rpm
+          path: rpmbuild/RPMS/*/*.rpm
 
   build_deb:
     name: Build .deb package
@@ -68,7 +68,7 @@ jobs:
         run: pwd
 
       - name: Upload artifact DEB
-        uses: actions/upload-artifact@v1.0.0
+        uses: actions/upload-artifact@v3
         with:
           name: deb
-          path: ./*.deb
+          path: *.deb
