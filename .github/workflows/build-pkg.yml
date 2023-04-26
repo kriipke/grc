@@ -3,7 +3,7 @@ on: push
 
 jobs:
   build_tarball:
-    name: Builds .tar file
+    name: Build source archive
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
           path: grc-${{github.ref_name}}.tar.gz          
 
   build_rpm:
-    name: build RPM
+    name: Build .rpm package
     needs: build_tarball
     runs-on: ubuntu-latest
     steps:
@@ -43,14 +43,18 @@ jobs:
           path: rpmbuild/RPMS/*/grc*.rpm
 
   build_deb:
-    name: Build DEB
+    name: Build .deb package
     needs: build_rpm
     runs-on: ubuntu-latest
     steps:
       - name: Download RPM artifact
         uses: actions/download-artifact@v1.0.0
+	id: download
         with:
           name: rpm
+
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
 
       - name: Convert RPM to DEB
         run: |
