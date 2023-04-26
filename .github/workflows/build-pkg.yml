@@ -11,6 +11,9 @@ jobs:
       - name: Replace version in grc.spec so correct source is downloaded when building RPM
         run: sed -Ei 's/(^Version:[[:space:]]*).*/\1${{github.ref_name}}/' grc.spec
 
+      - name: Confirm version in grc.spec
+        run: head -n 2 grc.spec
+
       - name: Create archive
         run: tar -cvf grc-${{github.ref_name}}.tar.gz *
 
@@ -36,8 +39,8 @@ jobs:
       - name: Upload RPM archive as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: grc-${{github.ref_name}}-1.el7.x86_64.rpm
-          path: rpmbuild/RPMS/x86_64/grc*x86_64.rpm
+          name: rpm
+          path: rpmbuild/RPMS/*/grc*x86_64.rpm
 
   build_deb:
     name: Build DEB
@@ -47,12 +50,12 @@ jobs:
       - name: Download RPM artifact
         uses: actions/download-artifact@v1.0.0
         with:
-          name: grc-${{github.ref_name}}-1.el7.x86_64.rpm
+          name: rpm
 
       - name: Convert RPM to DEB
         run: |
           sudo apt install -y alien
-          sudo alien --to-deb grc-${{github.ref_name}}-1.el7.x86_64.rpm
+          sudo alien --to-deb rpm/grc-${{github.ref_name}}-1.el7.x86_64.rpm
 
       - name: Upload artifact DEB
         uses: actions/upload-artifact@v1.0.0

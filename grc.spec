@@ -6,6 +6,7 @@ Summary:        Generic Colouriser
 License:        GPL
 URL:            http://melkor.dnp.fmph.uniba.sk/~garabik/grc.html
 Source0:        https://github.com/kriipke/grc/releases/download/v%{version}/%{name}-%{version}.tar.gz
+BuildArch:	noarch
 
 BuildRequires: bash
 Requires:      python 
