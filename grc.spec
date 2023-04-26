@@ -1,11 +1,11 @@
 Name:           grc
-Version:        %{tag}
+Version:        1.13.7
 Release:        1%{?dist}
 Summary:        Generic Colouriser
 
 License:        GPL
 URL:            http://melkor.dnp.fmph.uniba.sk/~garabik/grc.html
-Source0:        https://github.com/kriipke/grc/releases/download/%{version}/%{name}-%{version}.tar.gz
+Source:         https://github.com/kriipke/grc/releases/download/%{version}/%{name}-%{version}.tar.gz
 BuildArch:      noarch
 
 BuildRequires: bash
@@ -47,18 +47,9 @@ install -m 644 _%{name} $RPM_BUILD_ROOT%{_datadir}/zsh/site-functions
 
 %post
 if command -v zsh &>/dev/null; then
-  printf '%s\n' "Would you like to have grc configured system-wide in your shell configuration: /etc/zshrc?" \
-      "If you don't you'll have to manually add the following line to your shell somewhere to use grc: " \
-      "  [[ -s "/etc/profile.d/grc.sh" ]] && source /etc/grc.sh"
-  
-  read -p "Let this script configure your /etc/zshrc? [Y|n] " -n 1 -r
-
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-      exit 1
+  if [ -f /etc/zshrc ]; then
+    echo '[[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh' >> /etc/zshrc
   fi
-
-  echo '[[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh' >> /etc/zshrc
-
 else
   cat <<EOF
   ENSURE YOU HAVE THE FOLLOWING CONFIGUIRATION IN PLACE TO USE GRC:
