@@ -58,7 +58,7 @@ install -m 644 _%{name} $RPM_BUILD_ROOT%{_datadir}/zsh/site-functions
 %{_mandir}/man1/grcat.1.gz
 %{_datadir}/zsh/site-functions/_%{name}
 %license debian/copyright 
-%doc README.markdown
+%doc README.markdown Regexp.txt
 
 
 
