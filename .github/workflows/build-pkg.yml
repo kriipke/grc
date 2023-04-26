@@ -51,7 +51,7 @@ jobs:
 
       - name: Convert RPM to DEB
         run: |
-          apt install -y alien
+          sudo apt install -y alien
           alien --to-deb grc-${{github.ref_name}}-1.el7.x86_64.rpm
 
       - name: Upload artifact DEB
