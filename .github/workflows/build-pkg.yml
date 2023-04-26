@@ -61,8 +61,11 @@ jobs:
           sudo apt install -y alien
           sudo alien --to-deb */*.rpm
 
+      - name: find .
+        run: find .
+
       - name: Upload artifact DEB
         uses: actions/upload-artifact@v1.0.0
         with:
           name: deb
-          path: "*.deb"
+          path: "*/*.deb"
