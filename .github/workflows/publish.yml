@@ -2,7 +2,7 @@ name: Build Linux Packages
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "*.*.*"
 env:
   DIST: el7
   ARCH: noarch
@@ -85,6 +85,9 @@ jobs:
     steps:
       - name: Download .rpm artifact
         uses: actions/download-artifact@v3
+
+      - name: find .
+        run: find .
 
       - name: Release
         uses: softprops/action-gh-release@v1
