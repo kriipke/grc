@@ -1,11 +1,11 @@
 Name:           grc
-Version:        1.13
+Version:        1.13.3
 Release:        1%{?dist}
 Summary:        Generic Colouriser
 
 License:        GPL
 URL:            http://melkor.dnp.fmph.uniba.sk/~garabik/grc.html
-Source0:         %{name}-%{version}.tar.gz
+Source0:        https://github.com/kriipke/grc/releases/download/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires: bash
 Requires:      python 
