@@ -1,5 +1,5 @@
 name: Build Linux Packages
-  on: push
+on: push
 
 jobs:
   build_tarball:
