@@ -1,5 +1,4 @@
-name: RPM Build
-on: push
+name: RPM Build on: push
 
 jobs:
   build_tarball:
@@ -55,6 +54,12 @@ jobs:
 
       - name: "Echo download path"
         run: echo ${{steps.download.outputs.download-path}}
+
+      - name: Echo CWD
+        run: pwd
+
+      - name: find .
+        run: find .
 
       - name: Convert RPM to DEB
         run: |
