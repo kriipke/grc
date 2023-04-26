@@ -1,20 +1,24 @@
 name: Build Linux Packages
 on: push
+env:
+  DIST: el7
+  ARCH: noarch
 
 jobs:
   build_tarball:
     name: Build source archive
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Replace version in RPM spec so correct source is downloaded when building RPM
         run: sed -Ei 's/(^Version:[[:space:]]*).*/\1${{github.ref_name}}/' ${{ vars.PKG_NAME }}.spec
 
-      - name: Create archive
+      - name: Create source archive
         run: tar -cvf ${{ vars.PKG_NAME }}-${{ github.ref_name }}.tar.gz *
 
-      - name: Upload .tar.gz archive as artifact
+      - name: Upload source archive as artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ vars.PKG_NAME }}-${{ github.ref_name }}.tar.gz
@@ -25,29 +29,30 @@ jobs:
     needs: build_tarball
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Replace version in RPM spec so correct source is downloaded when building RPM
         run: sed -Ei 's/(^Version:[[:space:]]*).*/\1${{github.ref_name}}/' ${{ vars.PKG_NAME }}.spec
 
-      - name: RPM Build
+      - name: Run rpmbuild on RPM spec to produce package
         id: rpm
         uses: naveenrajm7/rpmbuild@master
         with:
           spec_file: ${{ vars.PKG_NAME }}.spec
 
-      - name: Upload RPM archive as artifact
+      - name: Upload .rpm package as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: rpm
-          path: rpmbuild/RPMS/*/*.rpm
+          name: ${{ vars.PKG_NAME }}-${{ github.ref_name }}-1.${{ vars.DIST }}.${{ vars.ARCH }}.tar.gz
+          path: rpmbuild/RPMS/${{ vars.ARCH }}/*.rpm
 
   build_deb:
     name: Build .deb package
     needs: build_rpm
     runs-on: ubuntu-latest
     steps:
-      - name: Download RPM artifact
+      - name: Download .rpm artifact
         uses: actions/download-artifact@v3
         id: download
         with:
@@ -56,16 +61,16 @@ jobs:
       - name: find .
         run: find .
 
-      - name: Convert RPM to DEB
+      - name: Convert .rpm to .deb
         run: |
           sudo apt install -y alien
-          sudo alien -k --verbose --to-deb */*.rpm
+          sudo alien -k --verbose --to-deb *.rpm
 
       - name: find .
         run: find . -exec readlink -f {} \;
 
-      - name: Upload artifact DEB
+      - name: Upload .deb package as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: deb
+          name: ${{ vars.PKG_NAME }}-${{ github.ref_name }}-1.${{ vars.DIST }}.${{ vars.ARCH }}.deb
           path: ${{ vars.PKG_NAME }}*.deb
